@@ -13,21 +13,25 @@ Building with CMake
 
         git clone https://github.com/nsumner/clang-plugins-demo.git
 
-2. Create a new directory for building.
+2. **OPTIONAL**: Run the build script. This does steps 3, 4, 5, and 6
+
+        bash build.sh
+
+3. Create a new directory for building.
 
         mkdir build
 
-3. Change into the new directory.
+4. Change into the new directory.
 
         cd build
 
-4. Run CMake with the path to the LLVM source.
+5. Run CMake with the path to the LLVM source.
 
         cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=True \
             -DLLVM_DIR=</path/to/LLVM/build>/lib/cmake/llvm/ \
             ../clang-plugins-demo
 
-5. Run make inside the build directory:
+6. Run make inside the build directory:
 
         make
 
