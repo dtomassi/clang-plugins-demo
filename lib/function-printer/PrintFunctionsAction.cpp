@@ -1,8 +1,10 @@
-
-
 #include "clang/AST/AST.h"
 #include "clang/AST/RecursiveASTVisitor.h"
 #include <clang/Frontend/FrontendPluginRegistry.h>
+#include "clang/AST/ASTContext.h"
+#include "clang/Basic/SourceLocation.h"
+#include "clang/Basic/SourceManager.h"
+#include "clang/AST/ASTContext.h"
 
 #include "PrintFunctionsAction.h"
 
@@ -14,9 +16,14 @@ static clang::FrontendPluginRegistry::Add<PrintFunctionsAction>
 
 class FunctionNameVisitor :
   public clang::RecursiveASTVisitor<FunctionNameVisitor> {
+
 public:
+  clang::ASTContext *context;
+
   bool
   VisitFunctionDecl(clang::FunctionDecl *f) {
+    // Check to see if the function source start location is within the main file
+    if(!(this->context)->getSourceManager().isInMainFile(f->getSourceRange().getBegin())) return true;
     llvm::outs() << "Function "
                  << (f->hasBody() ? "Def" : "Decl")
                  << " "
@@ -38,8 +45,8 @@ PrintFunctionsAction::EndSourceFileAction() {
 
   auto *unit = context.getTranslationUnitDecl();
   FunctionNameVisitor visitor;
+  visitor.context = &context;
   visitor.TraverseDecl(unit);
 
   clang::ASTFrontendAction::EndSourceFileAction();
 }
-
